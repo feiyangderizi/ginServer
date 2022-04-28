@@ -1,0 +1,41 @@
+# system configuration
+application:
+  name: ginServer
+  port: 8888
+  db-type: 'mysql'
+  use-redis: false     # 使用redis
+  use-mongodb: true     # 使用mongodb
+  use-rabbitmq: false     # 使用rabbitmq
+  auto-check-time: 30  #自动检查时间
+
+# redis configuration
+redis:
+  addr: '127.0.0.1:6379'
+  password: ''
+  db: 0
+  max-idle-conns: 10
+  min-open-conns: 1
+  max-open-conns: 100
+  idle-time-out: 30
+
+# mysql connect configuration
+mysql:
+  conn: ''
+  max-idle-conns: 10
+  min-open-conns: 1
+  max-open-conns: 100
+  idle-time-out: 30
+  log-mode: false
+
+rabbitmq:
+  addr:
+  exchange:
+
+mongodb:
+  addr: ''
+  db: ""
+  max-idle-conns: 10
+  min-open-conns: 1
+  max-open-conns: 100
+  idle-time-out: 30
+  log-collection: "GinServerLog"
