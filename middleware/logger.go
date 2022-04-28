@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"bytes"
-	"encoding/json"
+	json "encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -97,9 +97,11 @@ func SetRequestLogger() gin.HandlerFunc {
 		postLog.TTL = int(endTime.UnixNano()/1e6 - startTime.UnixNano()/1e6)
 
 		accessLog := "|" + c.Request.Method + "|" + postLog.Controller + "|" + c.ClientIP() + "|" + endTime.Format("2006-01-02 15:04:05.012") + "|" + fmt.Sprintf("%vms", endTime.UnixNano()/1e6-startTime.UnixNano()/1e6)
+
 		global.Logger.Debug(accessLog)
 		global.Logger.Debug(fmt.Sprintf("请求参数:%s", utils.ToJSON(params)))
 		global.Logger.Debug(fmt.Sprintf("接口返回:%s", utils.ToJSON(result)))
+
 		if global.Config.Application.UseMongodb && global.Config.MongoDB.LogCollection != "" {
 			accessChannel <- utils.ToJSON(postLog)
 		}
@@ -109,12 +111,15 @@ func SetRequestLogger() gin.HandlerFunc {
 func handleAccessChannel() {
 	for accessLog := range accessChannel {
 		var postLog PostLog
-		json.Unmarshal([]byte(accessLog), &postLog)
+		err := json.Unmarshal([]byte(accessLog), &postLog)
+		if err != nil {
+			global.Logger.Error("日志写入错误:" + err.Error())
+		}
 		mongoDBConn := initialize.MongoDBConnection{}
 		conn := mongoDBConn.Get()
-		err := conn.C(global.Config.MongoDB.LogCollection).Insert(postLog)
+		err = conn.C(global.Config.MongoDB.LogCollection).Insert(postLog)
 		if err != nil {
-			global.Logger.Error("MongoDB写入错误:" + err.Error())
+			global.Logger.Error("日志写入错误:" + err.Error())
 		}
 	}
 	return

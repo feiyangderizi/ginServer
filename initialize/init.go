@@ -46,7 +46,12 @@ func InitConfig(path string) {
 		fmt.Println(err)
 	}
 
-	global.Logger = gologger.GetLogger()
+	if global.Config.Application.UseMongodb && global.Config.MongoDB.LogCollection != "" {
+		global.Logger = gologger.GetLogger()
+	} else {
+		//将日志写入本地文件
+		global.Logger = gologger.GetLogger(gologger.FILE, "log.txt")
+	}
 
 	if global.Config.Application.DbType == "mysql" {
 		global.Logger.Info("正在连接MySQL")
