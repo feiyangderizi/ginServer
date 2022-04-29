@@ -29,6 +29,10 @@ func (result *Result) Response(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+func (result *Result) IsOK() bool {
+	return result.Status == 1
+}
+
 func Success() Result {
 	result := new(Result)
 	result.Status = SUCCESS
