@@ -2,90 +2,67 @@ package initialize
 
 import (
 	"errors"
+	"log"
+	"os"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/silenceper/pool"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/feiyangderizi/ginServer/global"
 )
 
-var mysql *gorm.DB
-var mysqlPool pool.Pool
-
 type MySqlConnection struct{}
 
 func (sqlConn *MySqlConnection) init() {
-	if global.Config.Mysql.Conn == "" {
-		panic(errors.New("Mysql连接串配置"))
+	config := global.Config.Mysql
+	if config.Conn == "" {
+		panic(errors.New("Mysql连接串未配置"))
 	}
-	if mysql == nil {
-		mysql, _ = gorm.Open("mysql", global.Config.Mysql.Conn)
-		mysql.LogMode(global.Config.Mysql.LogMode)
 
-		if global.Config.Mysql.MaxOpenConns > 1 && (mysqlPool == nil || mysqlPool.Len() == 0) {
-			_factory := func() (interface{}, error) { return gorm.Open("mysql", global.Config.Mysql.Conn) }
-			_close := func(v interface{}) error { return v.(*gorm.DB).Close() }
-
-			poolConfig := &pool.Config{
-				InitialCap:  global.Config.Mysql.MinOpenConns,
-				MaxCap:      global.Config.Mysql.MaxOpenConns,
-				MaxIdle:     global.Config.Mysql.MaxIdleConns,
-				Factory:     _factory,
-				Close:       _close,
-				IdleTimeout: time.Duration(global.Config.Mysql.IdleTimeOut) * time.Second,
-			}
-			var err error
-			mysqlPool, err = pool.NewChannelPool(poolConfig)
-			if err != nil {
-				global.Logger.Error("MySQL连接池初始化错误")
-			}
-		}
+	mysqlConfig := mysql.Config{
+		DSN:                       global.Config.Mysql.Conn,
+		DefaultStringSize:         191,
+		SkipInitializeWithVersion: false,
+	}
+	if db, err := gorm.Open(mysql.New(mysqlConfig), getConfig()); err != nil {
+		global.Logger.Error("mysql连接失败:" + err.Error())
+		return
+	} else {
+		sqlDB, _ := db.DB()
+		sqlDB.SetMaxIdleConns(config.MaxIdleConns)
+		sqlDB.SetMaxOpenConns(config.MaxOpenConns)
+		global.DB = db
 	}
 }
 
 func (sqlConn *MySqlConnection) close() {
-	mysql.Close()
-	mysql = nil
-	if mysqlPool != nil && mysqlPool.Len() > 0 {
-		mysqlPool.Release()
+	if global.DB != nil {
+		db, _ := global.DB.DB()
+		defer db.Close()
 	}
 }
 
-func (sqlConn *MySqlConnection) check() *gorm.DB {
-	_, err := mysql.Rows()
-	if err != nil {
-		sqlConn.close()
-		sqlConn.init()
-	}
-	return mysql
-}
+func getConfig() *gorm.Config {
+	config := &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true}
+	_default := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{
+		SlowThreshold: time.Duration(global.Config.Mysql.SlowThreshold) * time.Millisecond,
+		LogLevel:      logger.Silent,
+		Colorful:      true,
+	})
 
-func (sqlConn *MySqlConnection) Get() *gorm.DB {
-	if mysqlPool == nil {
-		global.Logger.Error("未初始化MySQL连接池")
-		return mysql
+	switch global.Config.Mysql.LogMode {
+	case "silent", "Silent":
+		config.Logger = _default.LogMode(logger.Silent)
+	case "error", "Error":
+		config.Logger = _default.LogMode(logger.Error)
+	case "warn", "Warn":
+		config.Logger = _default.LogMode(logger.Warn)
+	case "info", "Info":
+		config.Logger = _default.LogMode(logger.Info)
+	default:
+		config.Logger = _default.LogMode(logger.Info)
 	}
-	conn, err := mysqlPool.Get()
-	if err != nil {
-		global.Logger.Error("获取MySQL连接池中的连接失败:" + err.Error())
-		return nil
-	}
-	if conn == nil {
-		return nil
-	}
-	sql := conn.(*gorm.DB)
-	sql.LogMode(global.Config.Mysql.LogMode)
-	return sql
-}
-
-func (sqlConn *MySqlConnection) Return(conn *gorm.DB) {
-	if mysqlPool == nil || conn == nil {
-		return
-	}
-	err := mysqlPool.Put(conn)
-	if err != nil {
-		global.Logger.Error("归还MySQL连接给连接池错误:" + err.Error())
-	}
+	return config
 }
