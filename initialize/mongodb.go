@@ -59,17 +59,6 @@ func (mgoConn *MongoDBConnection) close() {
 	}
 }
 
-func (mgoConn *MongoDBConnection) check() {
-	if mongoDbClient == nil {
-		mgoConn.init()
-		return
-	}
-	if mongoDbClient.Session.Ping() != nil {
-		mgoConn.close()
-		mgoConn.init()
-	}
-}
-
 func (mgoConn *MongoDBConnection) Get() *mgo.Database {
 	if mgoPool == nil {
 		global.Logger.Error("MongoDB连接池未初始化")

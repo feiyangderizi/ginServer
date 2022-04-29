@@ -8,47 +8,45 @@ import (
 	"github.com/feiyangderizi/ginServer/global"
 )
 
-var rabbit *jazz.Connection
-
 type RabbitMQClient struct{}
 
-func (client *RabbitMQClient) init() {
+func (rabbitClient *RabbitMQClient) init() {
 	if global.Config.RabbitMQ.Addr == "" {
 		panic(errors.New("RabbitMQ连接串配置"))
 	}
 
-	if rabbit == nil {
-		client, err := jazz.Connect(global.Config.RabbitMQ.Addr)
-		if err != nil {
-			global.Logger.Error("RabbitMQ连接错误:" + err.Error())
-		} else {
-			rabbit = client
-		}
+	client, err := jazz.Connect(global.Config.RabbitMQ.Addr)
+	if err != nil {
+		global.Logger.Error("RabbitMQ连接错误:" + err.Error())
+	} else {
+		global.RABBITMQ = client
 	}
 }
 
-func (client *RabbitMQClient) close() {
-	if rabbit != nil {
-		rabbit.Close()
-		rabbit = nil
+func (rabbitClient *RabbitMQClient) close() {
+	if global.RABBITMQ != nil {
+		global.RABBITMQ.Close()
+		global.RABBITMQ = nil
 	}
 }
 
-func (client *RabbitMQClient) Send(queueName string, msg string) {
-	err := rabbit.SendMessage(global.Config.RabbitMQ.Exchange, queueName, msg)
+func (rabbitClient *RabbitMQClient) Send(queueName string, msg string) error {
+	err := global.RABBITMQ.SendMessage(global.Config.RabbitMQ.Exchange, queueName, msg)
 	if err != nil {
 		global.Logger.Error("RabbitMQ发送消息错误:" + err.Error())
+		return err
 	}
+	return nil
 }
 
-func (client *RabbitMQClient) Listener(queueName string, listener func(msg []byte)) {
+func (rabbitClient *RabbitMQClient) Listener(queueName string, listener func(msg []byte)) {
 	//侦听之前先创建队列
-	client.CreateQueue(queueName)
+	rabbitClient.CreateQueue(queueName)
 	//启动侦听消息处理线程
-	go rabbit.ProcessQueue(queueName, listener)
+	go global.RABBITMQ.ProcessQueue(queueName, listener)
 }
 
-func (client *RabbitMQClient) CreateQueue(queueName string) {
+func (rabbitClient *RabbitMQClient) CreateQueue(queueName string) error {
 	queues := make(map[string]jazz.QueueSpec)
 	binding := &jazz.Binding{
 		Exchange: global.Config.RabbitMQ.Exchange,
@@ -62,8 +60,10 @@ func (client *RabbitMQClient) CreateQueue(queueName string) {
 	setting := &jazz.Settings{
 		Queues: queues,
 	}
-	err := rabbit.CreateScheme(*setting)
+	err := global.RABBITMQ.CreateScheme(*setting)
 	if err != nil {
 		global.Logger.Error("RabbitMQ创建队列失败:" + err.Error())
+		return err
 	}
+	return nil
 }

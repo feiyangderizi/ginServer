@@ -25,16 +25,16 @@ type UserController struct{}
 func (userController *UserController) Create(c *gin.Context) {
 	params := utils.GinParamMap(c)
 	if !utils.Exists(params, "name") {
-		result := result.FailWithMsg("用户名不可为空")
-		result.Response(c)
+		r := result.FailWithMsg("用户名不可为空")
+		r.Response(c)
 	}
 	if !utils.Exists(params, "nickname") {
-		result := result.FailWithMsg("昵称不可为空")
-		result.Response(c)
+		r := result.FailWithMsg("昵称不可为空")
+		r.Response(c)
 	}
 	userService := service.UserService{}
-	result := userService.Create(params["name"], params["nickname"])
-	result.Response(c)
+	r := userService.Create(params["name"], params["nickname"])
+	r.Response(c)
 }
 
 // Update	godoc
@@ -43,25 +43,26 @@ func (userController *UserController) Create(c *gin.Context) {
 // @Tags	用户
 // @Accept	x-www-form-urlencoded
 // @Produce json
-// @Param	id formData int false "用户编号"
+// @Param	token header string true "令牌"
+// @Param	id formData int true "用户编号"
 // @Param	nickname formData string true "昵称"
 // @Success 200 {string} string	"ok"
 // @Router	/user/update [post][get]
 func (userController *UserController) Update(c *gin.Context) {
 	params := utils.GinParamMap(c)
 	if !utils.Exists(params, "id") {
-		result := result.FailWithMsg("未指定用户编号")
-		result.Response(c)
+		r := result.FailWithMsg("未指定用户编号")
+		r.Response(c)
 	}
 	id, _ := strconv.Atoi(params["id"])
 
 	if !utils.Exists(params, "nickname") {
-		result := result.FailWithMsg("昵称不可为空")
-		result.Response(c)
+		r := result.FailWithMsg("昵称不可为空")
+		r.Response(c)
 	}
 	userService := service.UserService{}
-	result := userService.Update(id, params["nickname"])
-	result.Response(c)
+	r := userService.Update(id, params["nickname"])
+	r.Response(c)
 }
 
 // Detail	godoc
@@ -76,11 +77,11 @@ func (userController *UserController) Update(c *gin.Context) {
 func (userController *UserController) Detail(c *gin.Context) {
 	params := utils.GinParamMap(c)
 	if !utils.Exists(params, "id") {
-		result := result.FailWithMsg("用户编号不可为空")
-		result.Response(c)
+		r := result.FailWithMsg("用户编号不可为空")
+		r.Response(c)
 	}
 	id, _ := strconv.Atoi(params["id"])
 	userService := service.UserService{}
-	result := userService.GetById(id)
-	result.Response(c)
+	r := userService.GetById(id)
+	r.Response(c)
 }

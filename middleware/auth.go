@@ -17,7 +17,7 @@ func Auth() gin.HandlerFunc {
 		}
 
 		//token验证
-		if r := checkToken(token); r.IsOK() {
+		if r := checkToken(token); !r.IsOK() {
 			r.Response(c)
 			c.Abort()
 			return

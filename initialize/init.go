@@ -3,7 +3,6 @@ package initialize
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/sadlil/gologger"
@@ -19,7 +18,7 @@ var (
 	RMQClient RabbitMQClient
 )
 
-func InitConfig(path string) {
+func Init(path string) {
 	if path == "" {
 		panic(errors.New("配置文件地址为空"))
 	}
@@ -70,15 +69,6 @@ func InitConfig(path string) {
 		global.Logger.Info("正在连接RabbitMQ")
 		RMQClient.init()
 	}
-
-	//设置定时任务自动检查
-	ticker := time.NewTicker(time.Minute * time.Duration(global.Config.Application.AutoCheckTime))
-	go func() {
-		for range ticker.C {
-			checkAll()
-		}
-	}()
-
 }
 
 func SafeExit() {
@@ -99,20 +89,5 @@ func SafeExit() {
 	if global.Config.Application.UseRabbitMQ {
 		global.Logger.Info("正在关闭RabbitMQ连接")
 		RMQClient.close()
-	}
-}
-
-func checkAll() {
-	if global.Config.Application.DbType == "mysql" {
-		global.Logger.Info("正在检查MySQL")
-		MySqlConn.check()
-	}
-	if global.Config.Application.UseMongodb {
-		global.Logger.Info("正在检查MongoDB")
-		MongoConn.check()
-	}
-	if global.Config.Application.UseRedis {
-		global.Logger.Info("正在检查Redis")
-		RedisConn.check()
 	}
 }

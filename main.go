@@ -25,7 +25,7 @@ const configFile = "application.yml"
 func main() {
 	//初始化配置，自动连接数据库
 	path, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	initialize.InitConfig(path + "/" + configFile)
+	initialize.Init(path + "/" + configFile)
 
 	//GIN的模式，生产环境可以设置成release
 	gin.SetMode("debug")
