@@ -10,6 +10,8 @@ import (
 func InitUserRouter(routerGroup *gin.RouterGroup) {
 	//添加自定义鉴权信息验证
 	routerGroup.Use(middleware.Auth())
+	//添加签名验证
+	routerGroup.Use(middleware.CheckSign())
 
 	userRouter := routerGroup.Group("user")
 
