@@ -8,6 +8,7 @@ require (
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/maczh/logs v1.0.0
 	github.com/maczh/mgtrace v1.0.0
 	github.com/maczh/utils v1.0.0
 	github.com/sadlil/gologger v0.0.0-20180131031757-2507bf651df8
@@ -34,7 +35,7 @@ require (
 	github.com/beltran/gssapi v0.0.0-20200324152954-d86554db4bab // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-hostpool v0.1.0 // indirect
-	github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23 // indirect
+	github.com/buger/jsonparser v1.0.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/couchbase/gocb/v2 v2.3.3 // indirect
 	github.com/couchbase/gocbcore/v10 v10.0.4 // indirect
@@ -84,7 +85,6 @@ require (
 	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042 // indirect
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a // indirect
 	github.com/lib/pq v1.1.1 // indirect
-	github.com/maczh/logs v1.0.0 // indirect
 	github.com/maczh/mgcache v0.0.0-20210716084131-9824ba2bf323 // indirect
 	github.com/maczh/mgconfig v1.0.8 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
