@@ -4,10 +4,12 @@ import (
 	"bytes"
 	json "encoding/json"
 	"fmt"
+	"io/ioutil"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/maczh/logs"
 	"github.com/maczh/mgtrace"
 	"github.com/maczh/utils"
 	"gopkg.in/mgo.v2/bson"
@@ -58,6 +60,14 @@ func SetRequestLogger() gin.HandlerFunc {
 		// 开始时间
 		startTime := time.Now()
 
+		data, err := c.GetRawData()
+		if err != nil {
+			logs.Error("GetRawData error:", err.Error())
+		}
+		body := string(data)
+
+		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data)) // 重新设置请求的Body
+
 		// 处理请求
 		c.Next()
 
@@ -82,6 +92,9 @@ func SetRequestLogger() gin.HandlerFunc {
 
 		// 日志格式
 		params := utils.GinParamMap(c)
+		if body != "" {
+			params["body"] = body
+		}
 		postLog := new(PostLog)
 		postLog.ID = bson.NewObjectId()
 		postLog.Time = startTime.Format("2006-01-02 15:04:05")
