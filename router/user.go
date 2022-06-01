@@ -16,6 +16,7 @@ func InitUserRouter(routerGroup *gin.RouterGroup) {
 
 	userController := controller.UserController{}
 	userRouter.Any("create", userController.Create)
+	userRouter.Any("add", userController.Add)
 	userRouter.Any("update", userController.Update)
 	userRouter.Any("detail", userController.Detail)
 }

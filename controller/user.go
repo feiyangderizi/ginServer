@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"fmt"
+	"github.com/feiyangderizi/ginServer/model"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +36,34 @@ func (userController *UserController) Create(c *gin.Context) {
 	}
 	userService := service.UserService{}
 	r := userService.Create(params["name"], params["nickname"])
+	r.Response(c)
+}
+
+// Add	godoc
+// @Summary		保存用户信息
+// @Description	保存用户信息
+// @Tags	用户
+// @Accept	application/json
+// @Produce json
+// @Param data body model.User true "用户信息"
+// @Success 200 {string} string	"ok"
+// @Router	/user/add [post][get]
+func (userController *UserController) Add(c *gin.Context) {
+	var user model.User
+	_ = c.ShouldBindJSON(&user)
+
+	if user.Name == "" {
+		r := result.FailWithMsg("用户名不可为空")
+		r.Response(c)
+	}
+
+	fmt.Println(user.Name)
+	if user.Nickname == "" {
+		r := result.FailWithMsg("昵称不可为空")
+		r.Response(c)
+	}
+	userService := service.UserService{}
+	r := userService.Create(user.Name, user.Nickname)
 	r.Response(c)
 }
 
