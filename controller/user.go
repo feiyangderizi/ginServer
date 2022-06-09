@@ -22,7 +22,7 @@ type UserController struct{}
 // @Produce json
 // @Param	name formData string true "用户名"
 // @Param	nickname formData string true "昵称"
-// @Success 200 {string} string	"ok"
+// @Success 200 {object} result.Result{data=model.User}	"ok"
 // @Router	/user/create [post][get]
 func (userController *UserController) Create(c *gin.Context) {
 	params := utils.GinParamMap(c)
@@ -46,7 +46,7 @@ func (userController *UserController) Create(c *gin.Context) {
 // @Accept	application/json
 // @Produce json
 // @Param data body model.User true "用户信息"
-// @Success 200 {string} string	"ok"
+// @Success 200 {object} result.Result{data=model.User}	"ok"
 // @Router	/user/add [post][get]
 func (userController *UserController) Add(c *gin.Context) {
 	var user model.User
@@ -102,7 +102,7 @@ func (userController *UserController) Update(c *gin.Context) {
 // @Accept	x-www-form-urlencoded
 // @Produce json
 // @Param	id formData int true "编号编号"
-// @Success 200 {string} string	"ok"
+// @Success 200 {object} result.Result{data=model.User}	"ok"
 // @Router	/user/detail [post][get]
 func (userController *UserController) Detail(c *gin.Context) {
 	params := utils.GinParamMap(c)
