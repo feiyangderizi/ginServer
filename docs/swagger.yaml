@@ -1,8 +1,70 @@
+definitions:
+  model.User:
+    properties:
+      id:
+        description: 用户编号
+        type: integer
+      name:
+        type: string
+      nickname:
+        type: string
+      status:
+        type: integer
+    type: object
+  result.Page:
+    properties:
+      count:
+        type: integer
+      index:
+        type: integer
+      size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  result.Result:
+    properties:
+      data: {}
+      msg:
+        type: string
+      page:
+        $ref: '#/definitions/result.Page'
+      status:
+        type: integer
+    type: object
 info:
   contact: {}
-  license: {}
-  version: 1.0.0(mgin)
+  description: ginServer演示范例
+  title: ginServer example
+  version: 1.0.0(ginServer)
 paths:
+  /user/add:
+    post:
+      consumes:
+      - application/json
+      description: 保存用户信息
+      parameters:
+      - description: 用户信息
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            allOf:
+            - $ref: '#/definitions/result.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      summary: 保存用户信息
+      tags:
+      - 用户
   /user/create:
     post:
       consumes:
@@ -25,7 +87,12 @@ paths:
         "200":
           description: ok
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/result.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
       summary: 保存用户信息
       tags:
       - 用户
@@ -46,7 +113,12 @@ paths:
         "200":
           description: ok
           schema:
-            type: string
+            allOf:
+            - $ref: '#/definitions/result.Result'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
       summary: 查询用户信息
       tags:
       - 用户
@@ -56,9 +128,15 @@ paths:
       - application/x-www-form-urlencoded
       description: 更新用户信息
       parameters:
+      - description: 令牌
+        in: header
+        name: token
+        required: true
+        type: string
       - description: 用户编号
         in: formData
         name: id
+        required: true
         type: integer
       - description: 昵称
         in: formData
