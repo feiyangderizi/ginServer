@@ -12,15 +12,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/feiyangderizi/ginServer/global"
-	"github.com/feiyangderizi/ginServer/initialize"
+	"bid-dh-cpic/global"
+	"bid-dh-cpic/initialize"
 )
 
 const configFile = "application.yml"
 
-//@title	ginServer example
-//@version 	1.0.0(ginServer)
-//@description	ginServer演示范例
+//@title	鼎函太保对接系统
+//@version 	1.0.0(bid-dinghan-cpic)
+//@description	鼎函太保对接系统
 
 func main() {
 	//初始化配置，自动连接数据库

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"bytes"
-	json "encoding/json"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -14,8 +14,8 @@ import (
 	"github.com/maczh/utils"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/feiyangderizi/ginServer/global"
-	"github.com/feiyangderizi/ginServer/initialize"
+	"bid-dh-cpic/global"
+	"bid-dh-cpic/initialize"
 )
 
 type PostLog struct {

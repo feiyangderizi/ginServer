@@ -2,7 +2,8 @@
 application:
   name: ginServer
   port: 8888
-  db-type: 'mysql'
+#  db-type: 'mysql'
+  db-type: ''
   use-redis: false     # 使用redis
   use-mongodb: false     # 使用mongodb
   use-rabbitmq: false     # 使用rabbitmq
@@ -37,3 +38,16 @@ mongodb:
   max-open-conns: 100
   idle-time-out: 30
   log-collection: "GinServerLog"
+
+dinghang:
+  signkey: "MeTKJnC3fIAxeer8erADRTlJ"
+  insurancecode: "TPYIC0532"
+  orgcode: "TPYIC0532"
+  areacode: "370200"
+  url:
+    callbacksurrender: "https://open-test.dinghanwang.com/api/SurrenderStatusReceipt"
+    callbackinvoice: "https://open-test.dinghanwang.com/api/InvoiceStatusReceipt"
+    callbackclaim: "https://open-test.dinghanwang.com/api/pushClaimRequest"
+    callbackaccount: "https://open-test.dinghanwang.com/api/GetAccountDetail"
+
+cpic:

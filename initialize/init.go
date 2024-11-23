@@ -1,14 +1,14 @@
 package initialize
 
 import (
+	"bid-dh-cpic/global"
+	"bid-dh-cpic/sdk/dinghan"
 	"errors"
 	"fmt"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/sadlil/gologger"
 	"github.com/spf13/viper"
-
-	"github.com/feiyangderizi/ginServer/global"
 )
 
 var (
@@ -69,6 +69,8 @@ func Init(path string) {
 		global.Logger.Info("正在连接RabbitMQ")
 		RMQClient.init()
 	}
+	//初始化鼎函配置参数
+	dinghan.InitConfig(v)
 }
 
 func SafeExit() {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bid-dh-cpic/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/maczh/mgtrace"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -8,14 +9,13 @@ import (
 
 	nice "github.com/ekyoung/gin-nice-recovery"
 
-	_ "github.com/feiyangderizi/ginServer/docs"
-	"github.com/feiyangderizi/ginServer/middleware"
-
-	"github.com/feiyangderizi/ginServer/model/result"
-	"github.com/feiyangderizi/ginServer/router"
+	_ "bid-dh-cpic/docs"
+	"bid-dh-cpic/model/result"
+	"bid-dh-cpic/router"
 )
 
-/**
+/*
+*
 统一路由映射入口
 */
 func setupRouter() *gin.Engine {
@@ -39,18 +39,19 @@ func setupRouter() *gin.Engine {
 
 	//设置404返回的内容
 	engine.NoRoute(func(c *gin.Context) {
-		result := result.FailWithMsg("请求的方法不存在")
-		result.Response(c)
+		r := result.FailWithMsg("请求的方法不存在")
+		r.Response(c)
 	})
 
 	//添加所需的路由映射
 	group := engine.Group("")
-	router.InitUserRouter(group)
+	router.InitInsureRouter(group)
+	router.InitCallbackRouter(group)
 
 	return engine
 }
 
 func recoveryHandler(c *gin.Context, err interface{}) {
-	result := result.FailWithMsg("系统异常，请联系客服")
-	result.Response(c)
+	r := result.FailWithMsg("系统异常，请联系客服")
+	r.Response(c)
 }

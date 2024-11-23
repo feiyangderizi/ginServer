@@ -1,15 +1,62 @@
 definitions:
-  model.User:
+  req.CallbackClaimCompleteReq:
     properties:
-      id:
-        description: 用户编号
-        type: integer
-      name:
+      claimTotalAmount:
+        description: 理赔总金额
+        type: number
+      payeeList:
+        items:
+          $ref: '#/definitions/req.Payee'
+        type: array
+      policyNo:
         type: string
-      nickname:
+    type: object
+  req.CallbackClaimReplenishReq:
+    properties:
+      claimTotalAmount:
+        description: 理赔总金额
+        type: number
+      fileName:
+        description: 需要用户补传的文件名称。
         type: string
-      status:
-        type: integer
+      policyNo:
+        type: string
+    type: object
+  req.CallbackInvoiceReq:
+    properties:
+      downLoadUrl:
+        description: 电子发票下下载地址
+        type: string
+      policyNo:
+        description: 保单号
+        type: string
+    type: object
+  req.CallbackSurrendReq:
+    properties:
+      policyNo:
+        description: 保单号
+        type: string
+      resultFlag:
+        description: true 成功 false 失败
+        type: string
+      resultMessage:
+        description: 处理结果
+        type: string
+    type: object
+  req.Payee:
+    properties:
+      claimAccountBankName:
+        description: 收款开户银行名称
+        type: string
+      claimAccountNo:
+        description: 收款人账号
+        type: string
+      claimAccountUser:
+        description: 收款人名称
+        type: string
+      claimAmount:
+        description: 赔付金额
+        type: number
     type: object
   result.Page:
     properties:
@@ -34,123 +81,111 @@ definitions:
     type: object
 info:
   contact: {}
-  description: ginServer演示范例
-  title: ginServer example
-  version: 1.0.0(ginServer)
+  description: 鼎函太保对接系统
+  title: 鼎函太保对接系统
+  version: 1.0.0(bid-dinghan-cpic)
 paths:
-  /user/add:
+  /callback/account/query:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 查询日期
+        in: query
+        name: queryDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/result.Result'
+      summary: 查询对账明细
+      tags:
+      - 对账
+  /callback/claim/notice:
     post:
       consumes:
       - application/json
-      description: 保存用户信息
       parameters:
-      - description: 用户信息
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/req.CallbackClaimCompleteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/result.Result'
+      summary: 理赔成功回执
+      tags:
+      - 回执
+  /callback/claim/replenish:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求体
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/req.CallbackClaimReplenishReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/result.Result'
+      summary: 理赔补充文件回执
+      tags:
+      - 回执
+  /callback/invoice:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 请求体
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.User'
+          $ref: '#/definitions/req.CallbackInvoiceReq'
       produces:
       - application/json
       responses:
         "200":
-          description: ok
+          description: 成功
           schema:
-            allOf:
-            - $ref: '#/definitions/result.Result'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.User'
-              type: object
-      summary: 保存用户信息
+            $ref: '#/definitions/result.Result'
+      summary: 发票回执
       tags:
-      - 用户
-  /user/create:
+      - 回执
+  /callback/surrend:
     post:
       consumes:
-      - application/x-www-form-urlencoded
-      description: 保存用户信息
+      - application/json
       parameters:
-      - description: 用户名
-        in: formData
-        name: name
+      - description: 请求体
+        in: body
+        name: req
         required: true
-        type: string
-      - description: 昵称
-        in: formData
-        name: nickname
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/req.CallbackSurrendReq'
       produces:
       - application/json
       responses:
         "200":
-          description: ok
+          description: 成功
           schema:
-            allOf:
-            - $ref: '#/definitions/result.Result'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.User'
-              type: object
-      summary: 保存用户信息
+            $ref: '#/definitions/result.Result'
+      summary: 退保回执
       tags:
-      - 用户
-  /user/detail:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 查询用户信息
-      parameters:
-      - description: 编号编号
-        in: formData
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            allOf:
-            - $ref: '#/definitions/result.Result'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.User'
-              type: object
-      summary: 查询用户信息
-      tags:
-      - 用户
-  /user/update:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 更新用户信息
-      parameters:
-      - description: 令牌
-        in: header
-        name: token
-        required: true
-        type: string
-      - description: 用户编号
-        in: formData
-        name: id
-        required: true
-        type: integer
-      - description: 昵称
-        in: formData
-        name: nickname
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ok
-          schema:
-            type: string
-      summary: 更新用户信息
-      tags:
-      - 用户
+      - 回执
 swagger: "2.0"

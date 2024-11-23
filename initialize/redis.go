@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-redis/redis"
 
-	"github.com/feiyangderizi/ginServer/global"
+	"bid-dh-cpic/global"
 )
 
 type RedisConnection struct{}

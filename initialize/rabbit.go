@@ -5,7 +5,7 @@ import (
 
 	"github.com/socifi/jazz"
 
-	"github.com/feiyangderizi/ginServer/global"
+	"bid-dh-cpic/global"
 )
 
 type RabbitMQClient struct{}

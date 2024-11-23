@@ -1,15 +1,14 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "ginServer演示范例",
-        "title": "ginServer example",
+        "description": "鼎函太保对接系统",
+        "title": "鼎函太保对接系统",
         "contact": {},
-        "version": "1.0.0(ginServer)"
+        "version": "1.0.0(bid-dinghan-cpic)"
     },
     "paths": {
-        "/user/add": {
-            "post": {
-                "description": "保存用户信息",
+        "/callback/account/query": {
+            "get": {
                 "consumes": [
                     "application/json"
                 ],
@@ -17,178 +16,154 @@
                     "application/json"
                 ],
                 "tags": [
-                    "用户"
+                    "对账"
                 ],
-                "summary": "保存用户信息",
+                "summary": "查询对账明细",
                 "parameters": [
                     {
-                        "description": "用户信息",
+                        "type": "string",
+                        "description": "查询日期",
+                        "name": "queryDate",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/result.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/callback/claim/notice": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "回执"
+                ],
+                "summary": "理赔成功回执",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/req.CallbackClaimCompleteReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/result.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/callback/claim/replenish": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "回执"
+                ],
+                "summary": "理赔补充文件回执",
+                "parameters": [
+                    {
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/req.CallbackClaimReplenishReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/result.Result"
+                        }
+                    }
+                }
+            }
+        },
+        "/callback/invoice": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "回执"
+                ],
+                "summary": "发票回执",
+                "parameters": [
+                    {
+                        "description": "请求体",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/req.CallbackInvoiceReq"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "成功",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/result.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.User"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/result.Result"
                         }
                     }
                 }
             }
         },
-        "/user/create": {
+        "/callback/surrend": {
             "post": {
-                "description": "保存用户信息",
                 "consumes": [
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "用户"
+                    "回执"
                 ],
-                "summary": "保存用户信息",
+                "summary": "退保回执",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "用户名",
-                        "name": "name",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "昵称",
-                        "name": "nickname",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
+                        "description": "请求体",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/result.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.User"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/req.CallbackSurrendReq"
                         }
                     }
-                }
-            }
-        },
-        "/user/detail": {
-            "post": {
-                "description": "查询用户信息",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户"
-                ],
-                "summary": "查询用户信息",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "编号编号",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
-                    }
                 ],
                 "responses": {
                     "200": {
-                        "description": "ok",
+                        "description": "成功",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/result.Result"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/model.User"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/user/update": {
-            "post": {
-                "description": "更新用户信息",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "用户"
-                ],
-                "summary": "更新用户信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "令牌",
-                        "name": "token",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "用户编号",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "昵称",
-                        "name": "nickname",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/result.Result"
                         }
                     }
                 }
@@ -196,21 +171,88 @@
         }
     },
     "definitions": {
-        "model.User": {
+        "req.CallbackClaimCompleteReq": {
             "type": "object",
             "properties": {
-                "id": {
-                    "description": "用户编号",
-                    "type": "integer"
+                "claimTotalAmount": {
+                    "description": "理赔总金额",
+                    "type": "number"
                 },
-                "name": {
+                "payeeList": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/req.Payee"
+                    }
+                },
+                "policyNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "req.CallbackClaimReplenishReq": {
+            "type": "object",
+            "properties": {
+                "claimTotalAmount": {
+                    "description": "理赔总金额",
+                    "type": "number"
+                },
+                "fileName": {
+                    "description": "需要用户补传的文件名称。",
                     "type": "string"
                 },
-                "nickname": {
+                "policyNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "req.CallbackInvoiceReq": {
+            "type": "object",
+            "properties": {
+                "downLoadUrl": {
+                    "description": "电子发票下下载地址",
                     "type": "string"
                 },
-                "status": {
-                    "type": "integer"
+                "policyNo": {
+                    "description": "保单号",
+                    "type": "string"
+                }
+            }
+        },
+        "req.CallbackSurrendReq": {
+            "type": "object",
+            "properties": {
+                "policyNo": {
+                    "description": "保单号",
+                    "type": "string"
+                },
+                "resultFlag": {
+                    "description": "true 成功 false 失败",
+                    "type": "string"
+                },
+                "resultMessage": {
+                    "description": "处理结果",
+                    "type": "string"
+                }
+            }
+        },
+        "req.Payee": {
+            "type": "object",
+            "properties": {
+                "claimAccountBankName": {
+                    "description": "收款开户银行名称",
+                    "type": "string"
+                },
+                "claimAccountNo": {
+                    "description": "收款人账号",
+                    "type": "string"
+                },
+                "claimAccountUser": {
+                    "description": "收款人名称",
+                    "type": "string"
+                },
+                "claimAmount": {
+                    "description": "赔付金额",
+                    "type": "number"
                 }
             }
         },

@@ -7,7 +7,7 @@ import (
 	"github.com/silenceper/pool"
 	"gopkg.in/mgo.v2"
 
-	"github.com/feiyangderizi/ginServer/global"
+	"bid-dh-cpic/global"
 )
 
 var mongoDbClient *mgo.Database

@@ -6,7 +6,7 @@ import (
 	"github.com/socifi/jazz"
 	"gorm.io/gorm"
 
-	"github.com/feiyangderizi/ginServer/initialize/config"
+	"bid-dh-cpic/initialize/config"
 )
 
 var (
